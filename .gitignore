@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.vite/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Private working notes, kept on this computer only
+CLAUDE.md
+docs/
+.claude/

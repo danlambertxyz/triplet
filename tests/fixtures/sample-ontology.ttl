@@ -1,0 +1,62 @@
+# Expected Ontology graph, from the sample domain (a small data governance ontology)
+@prefix dg:   <https://example.org/ontology/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Classes
+dg:BusinessTerm         a owl:Class ; rdfs:label "Business term" .
+dg:DataDomain           a owl:Class ; rdfs:label "Data domain" .
+dg:LogicalDataElement   a owl:Class ; rdfs:label "Logical data element" .
+dg:PhysicalDataElement  a owl:Class ; rdfs:label "Physical data element" .
+dg:Process              a owl:Class ; rdfs:label "Process" .
+dg:System               a owl:Class ; rdfs:label "System" .
+dg:DataProduct          a owl:Class ; rdfs:label "Data product" .
+dg:Dataset              a owl:Class ; rdfs:label "Dataset" .
+
+# Relationships
+dg:implements a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label  "implements" ;
+    rdfs:domain dg:PhysicalDataElement ;
+    rdfs:range  dg:LogicalDataElement .
+
+dg:represents a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label  "represents" ;
+    rdfs:domain dg:LogicalDataElement ;
+    rdfs:range  dg:BusinessTerm .
+
+dg:belongsTo a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label  "belongs to" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( dg:BusinessTerm dg:DataProduct ) ] ;
+    rdfs:range  dg:DataDomain .
+
+dg:hasPhysicalDataElement a owl:ObjectProperty ;
+    rdfs:label  "has physical data element" ;
+    rdfs:domain dg:System ;
+    rdfs:range  dg:PhysicalDataElement .
+
+dg:uses a owl:ObjectProperty ;
+    rdfs:label  "uses" ;
+    rdfs:domain dg:Process ;
+    rdfs:range  dg:PhysicalDataElement .
+
+dg:hasDataset a owl:ObjectProperty ;
+    rdfs:label  "has dataset" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( dg:DataProduct dg:System ) ] ;
+    rdfs:range  dg:Dataset .
+
+# Attributes (skos:definition is used from SKOS and not redeclared here)
+dg:dataType a owl:DatatypeProperty ;
+    rdfs:label  "data type" ;
+    rdfs:domain dg:PhysicalDataElement ;
+    rdfs:range  xsd:string .
+
+dg:containsPII a owl:DatatypeProperty ;
+    rdfs:label  "contains PII" ;
+    rdfs:domain dg:PhysicalDataElement ;
+    rdfs:range  xsd:boolean .
+
+dg:lastRefreshed a owl:DatatypeProperty ;
+    rdfs:label  "last refreshed" ;
+    rdfs:domain dg:Dataset ;
+    rdfs:range  xsd:date .

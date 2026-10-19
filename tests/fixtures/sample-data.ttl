@@ -1,0 +1,85 @@
+# Expected Data graph, from the sample domain (a small data governance ontology)
+@prefix dg:   <https://example.org/ontology/> .
+@prefix data: <https://example.org/data/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Data domain and data product
+data:IndividualClient a dg:DataDomain ; rdfs:label "Individual Client" .
+
+data:IndividualClient360 a dg:DataProduct ; rdfs:label "Individual Client 360" ;
+    dg:belongsTo  data:IndividualClient ;
+    dg:hasDataset data:ClientMaster , data:KYCProfiles .
+
+# Business terms
+data:ClientIdentifier a dg:BusinessTerm ; rdfs:label "Client Identifier" ;
+    skos:definition "A unique reference assigned to an individual client." ;
+    dg:belongsTo data:IndividualClient .
+
+data:FullName a dg:BusinessTerm ; rdfs:label "Full Name" ;
+    skos:definition "The client's legal name." ;
+    dg:belongsTo data:IndividualClient .
+
+data:DateOfBirth a dg:BusinessTerm ; rdfs:label "Date of Birth" ;
+    skos:definition "The date the client was born." ;
+    dg:belongsTo data:IndividualClient .
+
+data:ResidentialAddress a dg:BusinessTerm ; rdfs:label "Residential Address" ;
+    skos:definition "The address where the client normally lives." ;
+    dg:belongsTo data:IndividualClient .
+
+data:TaxIdentificationNumber a dg:BusinessTerm ; rdfs:label "Tax Identification Number" ;
+    skos:definition "The identifier issued to the client by a tax authority." ;
+    dg:belongsTo data:IndividualClient .
+
+data:KYCRiskRating a dg:BusinessTerm ; rdfs:label "KYC Risk Rating" ;
+    skos:definition "The client's assessed money-laundering and financial-crime risk level." ;
+    dg:belongsTo data:IndividualClient .
+
+# Logical data elements
+data:ClientID           a dg:LogicalDataElement ; rdfs:label "Client ID" ;            dg:represents data:ClientIdentifier .
+data:GivenName          a dg:LogicalDataElement ; rdfs:label "Given Name" ;           dg:represents data:FullName .
+data:FamilyName         a dg:LogicalDataElement ; rdfs:label "Family Name" ;          dg:represents data:FullName .
+data:BirthDate          a dg:LogicalDataElement ; rdfs:label "Birth Date" ;           dg:represents data:DateOfBirth .
+data:AddressLine1       a dg:LogicalDataElement ; rdfs:label "Address Line 1" ;       dg:represents data:ResidentialAddress .
+data:PostalCode         a dg:LogicalDataElement ; rdfs:label "Postal Code" ;          dg:represents data:ResidentialAddress .
+data:CountryOfResidence a dg:LogicalDataElement ; rdfs:label "Country of Residence" ; dg:represents data:ResidentialAddress .
+data:TaxIDNumber        a dg:LogicalDataElement ; rdfs:label "Tax ID Number" ;        dg:represents data:TaxIdentificationNumber .
+data:RiskRatingCode     a dg:LogicalDataElement ; rdfs:label "Risk Rating Code" ;     dg:represents data:KYCRiskRating .
+
+# Datasets
+data:ClientMaster          a dg:Dataset ; rdfs:label "Client Master" ;           dg:lastRefreshed "2026-10-14"^^xsd:date .
+data:ClientAccountRegister a dg:Dataset ; rdfs:label "Client Account Register" ; dg:lastRefreshed "2026-10-14"^^xsd:date .
+data:KYCProfiles           a dg:Dataset ; rdfs:label "KYC Profiles" ;            dg:lastRefreshed "2026-10-01"^^xsd:date .
+
+# Systems
+data:CRM a dg:System ; rdfs:label "CRM" ;
+    dg:hasDataset data:ClientMaster ;
+    dg:hasPhysicalDataElement data:CUST_ID , data:FIRST_NM , data:LAST_NM , data:DOB .
+
+data:CoreBanking a dg:System ; rdfs:label "Core Banking" ;
+    dg:hasDataset data:ClientAccountRegister ;
+    dg:hasPhysicalDataElement data:CLIENT_NO , data:ADDR_LN1 , data:POST_CD .
+
+data:KYCPlatform a dg:System ; rdfs:label "KYC Platform" ;
+    dg:hasDataset data:KYCProfiles ;
+    dg:hasPhysicalDataElement data:RISK_SCORE , data:TIN .
+
+# Physical data elements
+data:CUST_ID    a dg:PhysicalDataElement ; rdfs:label "CUST_ID" ;    dg:implements data:ClientID ;       dg:dataType "VARCHAR(20)" ;  dg:containsPII false .
+data:FIRST_NM   a dg:PhysicalDataElement ; rdfs:label "FIRST_NM" ;   dg:implements data:GivenName ;      dg:dataType "VARCHAR(100)" ; dg:containsPII true .
+data:LAST_NM    a dg:PhysicalDataElement ; rdfs:label "LAST_NM" ;    dg:implements data:FamilyName ;     dg:dataType "VARCHAR(100)" ; dg:containsPII true .
+data:DOB        a dg:PhysicalDataElement ; rdfs:label "DOB" ;        dg:implements data:BirthDate ;      dg:dataType "DATE" ;         dg:containsPII true .
+data:CLIENT_NO  a dg:PhysicalDataElement ; rdfs:label "CLIENT_NO" ;  dg:implements data:ClientID ;       dg:dataType "CHAR(12)" ;     dg:containsPII false .
+data:ADDR_LN1   a dg:PhysicalDataElement ; rdfs:label "ADDR_LN1" ;   dg:implements data:AddressLine1 ;   dg:dataType "VARCHAR(200)" ; dg:containsPII true .
+data:POST_CD    a dg:PhysicalDataElement ; rdfs:label "POST_CD" ;    dg:implements data:PostalCode ;     dg:dataType "VARCHAR(10)" ;  dg:containsPII true .
+data:RISK_SCORE a dg:PhysicalDataElement ; rdfs:label "RISK_SCORE" ; dg:implements data:RiskRatingCode ; dg:dataType "INTEGER" ;      dg:containsPII false .
+data:TIN        a dg:PhysicalDataElement ; rdfs:label "TIN" ;        dg:implements data:TaxIDNumber ;    dg:dataType "VARCHAR(20)" ;  dg:containsPII true .
+
+# Processes
+data:ClientOnboarding a dg:Process ; rdfs:label "Client Onboarding" ;
+    dg:uses data:CUST_ID , data:FIRST_NM , data:LAST_NM , data:DOB .
+
+data:KYCPeriodicReview a dg:Process ; rdfs:label "KYC Periodic Review" ;
+    dg:uses data:RISK_SCORE , data:DOB .
