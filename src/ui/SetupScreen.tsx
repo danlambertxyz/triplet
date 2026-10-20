@@ -1,18 +1,22 @@
 // SCR-01: project setup, shown once before the main screen.
 
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { declareClasses, parseClassList } from '../core/entry';
+import { isParseError, planImport, readTurtle, type ParsedFile } from '../core/import';
 import { toLocalName } from '../core/localName';
 import {
   DEFAULT_SETUP,
   normaliseBase,
   settingsFromSetup,
+  validateGraphNames,
   validateSetup,
   type SetupDraft,
   type SetupErrors,
   type SetupField,
 } from '../core/settings';
+import type { GraphName, ProjectSettings } from '../core/types';
 import { BUILTIN_PREFIXES } from '../core/vocab';
+import { FilePickers, ImportSummary, type PickedFile } from './ImportFiles';
 import { useApp } from './store';
 
 export function SetupScreen() {
@@ -24,12 +28,60 @@ export function SetupScreen() {
   const [showVocab, setShowVocab] = useState(false);
   const [classText, setClassText] = useState('');
   const classList = parseClassList(classText);
+  // IMP-01, IMP-02: start empty, or from Turtle files.
+  const [start, setStart] = useState<'empty' | 'files'>('empty');
+  const [files, setFiles] = useState<Partial<Record<GraphName, PickedFile>>>({});
+  const [filesMissing, setFilesMissing] = useState(false);
+  const importing = start === 'files';
+  const hasFile = !!files.data || !!files.ontology;
+  const fileError = Object.values(files).some((f) => f && isParseError(f.result));
+  const [plan, setPlan] = useState<ReturnType<typeof planImport> | null>(null);
+
+  /** The project the form describes; with files, their custom prefixes too (PFX-04). */
+  const settingsOf = (d: SetupDraft): ProjectSettings => ({
+    ...settingsFromSetup(d),
+    ...(importing && plan ? { customPrefixes: plan.customPrefixes } : {}),
+  });
+  /** Setup's checks, plus clashes with the files' custom prefixes. */
+  const check = (d: SetupDraft): SetupErrors => {
+    const found = validateSetup(d);
+    if (!importing || !plan || Object.keys(found).length > 0) return found;
+    return validateGraphNames(d, settingsOf(d));
+  };
+
+  // IMP-03, IMP-04: read the files and fill in the namespaces they use.
+  // Read from refs after the await, so two picks in flight don't drop each other's file.
+  const filesRef = useRef(files);
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const pick = async (graph: GraphName, file: File | null) => {
+    const picked = file ? { fileName: file.name, result: readTurtle(file.name, await file.text()) } : undefined;
+    const next = { ...filesRef.current };
+    if (picked) next[graph] = picked;
+    else delete next[graph];
+    filesRef.current = next;
+    setFiles(next);
+    setFilesMissing(false);
+    const ok: Partial<Record<GraphName, ParsedFile>> = {};
+    for (const g of ['data', 'ontology'] as const) {
+      const r = next[g]?.result;
+      if (r && !isParseError(r)) ok[g] = r;
+    }
+    if (!ok.data && !ok.ontology) {
+      setPlan(null);
+      return;
+    }
+    const p = planImport(ok, draftRef.current);
+    setPlan(p);
+    setDraft((d) => ({ ...d, ...p.names }));
+    setErrors({});
+  };
 
   // Field checks run as you type; an empty field is only flagged on submit.
   const update = (field: SetupField, value: string) => {
     const next = { ...draft, [field]: value };
     setDraft(next);
-    const found = validateSetup(next);
+    const found = check(next);
     setErrors((e) => {
       const out: SetupErrors = {};
       for (const f of Object.keys(next) as SetupField[]) {
@@ -40,13 +92,15 @@ export function SetupScreen() {
     });
   };
 
+  const blocked = importing ? !hasFile || fileError || !plan : classList.errors.length > 0;
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    const found = validateSetup(draft);
+    const found = check(draft);
     setErrors(found);
-    if (Object.keys(found).length > 0 || classList.errors.length > 0) return;
-    const settings = settingsFromSetup(draft);
-    createProject(settings, declareClasses(classList.names, settings));
+    if (importing && !hasFile) setFilesMissing(true);
+    if (Object.keys(found).length > 0 || blocked) return;
+    const settings = settingsOf(draft);
+    createProject(settings, importing && plan ? plan.triples : declareClasses(classList.names, settings));
   };
 
   const input = (field: SetupField, id: string, className: string) => (
@@ -90,6 +144,22 @@ export function SetupScreen() {
             </p>
           </div>
 
+          <div className="start-choice">
+            <div className="seg" role="group" aria-label="How to start">
+              <button type="button" aria-pressed={!importing} onClick={() => setStart('empty')}>
+                Start empty
+              </button>
+              <button type="button" aria-pressed={importing} onClick={() => setStart('files')}>
+                Start from Turtle files
+              </button>
+            </div>
+            <span className="start-note">
+              {importing
+                ? 'Pick up where you left off: open the .ttl files Triplet exported, or Turtle from elsewhere.'
+                : 'Type your triples from scratch.'}
+            </span>
+          </div>
+
           <div className="explain">
             <div className="t1">Every project has two graphs</div>
             <div className="cols">
@@ -126,6 +196,8 @@ export function SetupScreen() {
             {error('name', 'p-name')}
           </div>
 
+          {importing && <FilePickers files={files} onPick={pick} missing={filesMissing} />}
+
           <section className="card" aria-labelledby="h-ns">
             <div className="card-head">
               <h2 id="h-ns">Namespaces</h2>
@@ -133,6 +205,11 @@ export function SetupScreen() {
                 Every term gets a web address (IRI) made of a base address, the graph's name and the term's name. The
                 graph's name is also its short prefix in exported files.
               </p>
+              {importing && plan && (plan.detected.base || plan.detected.dataPath || plan.detected.ontologyPath) && (
+                <p className="detected">
+                  Filled in from your files. Changing them changes the IRIs of your own terms, as in Settings.
+                </p>
+              )}
             </div>
             <div className="field">
               <label htmlFor="ns-base">Base address</label>
@@ -160,7 +237,9 @@ export function SetupScreen() {
             />
           </section>
 
-          <section className="card" aria-labelledby="h-classes">
+          {importing && plan && <ImportSummary plan={plan} />}
+
+          <section className="card" aria-labelledby="h-classes" hidden={importing}>
             <div className="card-head">
               <h2 id="h-classes">
                 Classes you already know <span className="opt">· optional</span>
@@ -238,9 +317,9 @@ export function SetupScreen() {
             <button
               type="submit"
               className="btn primary lg"
-              aria-disabled={Object.keys(validateSetup(draft)).length > 0 || classList.errors.length > 0}
+              aria-disabled={Object.keys(check(draft)).length > 0 || blocked}
             >
-              Create project
+              {importing ? 'Create project from files' : 'Create project'}
             </button>
           </div>
         </form>

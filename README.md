@@ -20,6 +20,7 @@ You see them as a list and as a graph, edit them, and export each one as a Turtl
 - **Editing with Undo.** Rename, merge, set a class, or delete with a warning that lists every triple affected.
 - **Duplicate spotting.** “Date of Birth” and “date of birth” are flagged so you can merge them, keep one, link them, or keep them apart.
 - **Sketch and Validate modes.** Sketch lets you type anything. Validate checks your Data graph against your own Ontology graph (wrong class, wrong value type, a single-value relationship with two values …) and flags problems without blocking you.
+- **Start from Turtle files.** Open the files Triplet exported to pick up where you left off, or Turtle from elsewhere: what Triplet can't show (blank nodes, OWL restrictions, language tags …) is listed before you import.
 - **Clean Turtle export.** Written and re-checked with [N3.js](https://github.com/rdfjs/N3.js); only the prefixes you use are declared.
 
 A built-in guide (the **?** button) explains everything in plain language.
@@ -30,7 +31,7 @@ Triplet has no server, no account and no tracking. Your project is saved **only 
 
 - Clearing your browser's site data deletes your project.
 - It doesn't move between browsers or computers.
-- **Export your `.ttl` files to keep a copy.** (Opening `.ttl` files back into Triplet is planned but not built yet.)
+- **Export your `.ttl` files to keep a copy.** To carry on from them, start a new project and choose **Start from Turtle files**: pick the Data and Ontology graph files, check the summary, and create the project. Names, literals, classes and relationships come back as they were, so exporting again gives the same Turtle. Accepted exceptions, pairs kept as different things, card positions and Undo history aren't in a `.ttl` file, so they aren't restored.
 
 ## Three ways to use it
 
@@ -72,7 +73,7 @@ The core RDF logic lives in `src/core/` as plain TypeScript with no UI code, and
 
 ## Status
 
-Triplet is a working first version (MVP). Planned next: opening `.ttl` files to carry on where you left off, drafting an ontology from a data file, and loading a published ontology to check against.
+Triplet is a working first version (MVP). Planned next: drafting an ontology from a data file, and loading a published ontology to check against.
 
 Desktop and laptop browsers only.
 

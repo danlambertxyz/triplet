@@ -317,6 +317,36 @@ export function HelpDialog({ onClose }: { onClose: () => void }) {
             <li>Starting a new project (from the project name) clears this one; it can't be undone.</li>
           </ul>
         </details>
+
+        <details>
+          <summary>Saving and restoring with .ttl files</summary>
+          <ul>
+            <li>
+              Your project lives only in this browser. Clearing the browser's site data deletes it, so export both
+              graphs now and then to keep a copy.
+            </li>
+            <li>
+              To carry on from a copy, start a new project and choose <b>Start from Turtle files</b> on the setup
+              screen. Pick the Data graph file and the Ontology graph file; you decide which graph each file goes
+              into. Triplet fills in the base address and graph names from the files and shows what it will import
+              before anything is created.
+            </li>
+            <li>
+              Names, literals, classes, relationships and either/or domains and ranges come back as they were, so
+              exporting again gives the same Turtle.
+            </li>
+            <li>
+              Not restored, since a .ttl file holds only triples: accepted exceptions, pairs kept as different things,
+              where you dragged the cards, and Undo history.
+            </li>
+            <li>
+              Turtle from elsewhere works too, as far as Triplet can show it. Blank nodes ([ … ]), lists and OWL
+              restrictions are left out; language tags and datatypes Triplet doesn't have are kept as plain text (an
+              xsd:int becomes an integer). Namespaces that aren't your graphs' become custom prefixes. The summary
+              lists each of these with an example.
+            </li>
+          </ul>
+        </details>
       </div>
       <div className="dialog-foot end">
         <div className="dialog-btns">

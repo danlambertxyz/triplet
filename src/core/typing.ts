@@ -17,7 +17,7 @@ const K_SUBPROPERTY = termKey({ ns: vocabNs('rdfs'), local: 'subPropertyOf' });
 const K_RDFS_LITERAL = termKey({ ns: vocabNs('rdfs'), local: 'Literal' });
 const CLASS_TYPES = new Set([termKey(OWL_CLASS), termKey(RDFS_CLASS)]);
 /** Types that already say which kind of property a term is. */
-const PROPERTY_KIND_TYPES = new Set(
+export const PROPERTY_KIND_TYPES = new Set(
   ['owl|ObjectProperty', 'owl|DatatypeProperty', 'owl|AnnotationProperty', 'rdf|Property'].map((s) => {
     const [p, l] = s.split('|');
     return termKey({ ns: vocabNs(p), local: l });
