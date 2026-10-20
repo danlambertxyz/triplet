@@ -547,23 +547,3 @@ h3.band { margin: 0; font-weight: 400; padding: 0; }
 .trow .flags .flag-acts .link-btn { font-size: 11.5px; }
 .dialog-flags { max-height: none; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 6px; }
 .exc-reason { display: block; margin-top: 2px; font-size: 11.5px; color: var(--muted-2); }
-
-/* Import from Turtle (Milestone 8); no design, so it follows the setup screen's cards. */
-.start-choice { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.start-choice .seg { flex: none; }
-.start-note { font-size: 13px; color: var(--muted); }
-.file-row { align-items: center; }
-.file-input { flex: 1 1 auto; min-width: 0; font-size: 13px; }
-.file-input::file-selector-button { height: 32px; margin-right: 10px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: #ffffff; font: inherit; font-weight: 500; cursor: pointer; }
-.card .detected { margin-top: 4px; color: var(--ink-2); }
-.import-counts td:nth-child(n+3), .import-counts th:nth-child(n+3) { text-align: right; }
-.card .import-why { font-size: 12px; }
-.card .import-ok { color: var(--ink-2); }
-.chip .role { font-family: var(--sans); color: var(--muted); }
-.import-notes { display: flex; flex-direction: column; gap: 6px; }
-.import-notes h3 { margin: 6px 0 0; font-size: 13px; font-weight: 600; }
-.import-notes ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.import-notes li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; background: var(--tint); border-radius: 6px; font-size: 13px; }
-.import-notes .count { font-weight: 600; }
-.import-notes .where, .import-notes .why { color: var(--muted); font-size: 12px; }
-.import-notes .example-line { font-size: 11.5px; color: var(--ink-2); overflow-wrap: anywhere; }
