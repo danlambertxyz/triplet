@@ -73,7 +73,7 @@ The core RDF logic lives in `src/core/` as plain TypeScript with no UI code, and
 
 ## Status
 
-Triplet is a working first version (MVP). Planned next: drafting an ontology from a data file, and loading a published ontology to check against.
+Triplet is a working first version (MVP). It is for designing a knowledge graph from scratch, or carrying on with your own Triplet projects through project files; it is not meant to open or edit Turtle written elsewhere.
 
 Desktop and laptop browsers only.
 
