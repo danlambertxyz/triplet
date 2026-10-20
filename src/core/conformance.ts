@@ -23,7 +23,8 @@ import type { Datatype, IriTerm, Triple } from './types';
 import { inferOntologyTyping, isDatatypeTerm } from './typing';
 import { RDF_TYPE, RDFS_DOMAIN, RDFS_RANGE, RDFS_SUBCLASS_OF, vocabNs } from './vocab';
 
-export type CheckKind = 'domain' | 'range' | 'undeclared' | 'functional' | 'plain';
+export const CHECK_KINDS = ['domain', 'range', 'undeclared', 'functional', 'plain'] as const;
+export type CheckKind = (typeof CHECK_KINDS)[number];
 
 /** The graph a check looks at: CHK-11 checks the Ontology graph, every other check the Data graph. */
 export function graphOfCheck(kind: CheckKind): 'data' | 'ontology' {

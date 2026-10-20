@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { defaultFileName, exportGraph, type ExportResult } from '../core/export';
 import type { GraphName, ProjectSettings } from '../core/types';
 import { BackIcon, CheckIcon, DownloadIcon } from './icons';
+import { projectFileName, writeProjectFile } from '../core/projectFile';
 import { useApp } from './store';
 
 const TITLES: Record<GraphName, string> = { data: 'Data graph', ontology: 'Ontology graph' };
@@ -15,8 +16,8 @@ function withTtl(name: string, graph: GraphName, projectName: string): string {
   return /\.ttl$/i.test(trimmed) ? trimmed : `${trimmed}.ttl`;
 }
 
-function download(fileName: string, turtle: string) {
-  const url = URL.createObjectURL(new Blob([turtle], { type: 'text/turtle;charset=utf-8' }));
+function download(fileName: string, text: string, type = 'text/turtle;charset=utf-8') {
+  const url = URL.createObjectURL(new Blob([text], { type }));
   const a = document.createElement('a');
   a.href = url;
   a.download = fileName;
@@ -42,6 +43,23 @@ export function ExportScreen({ settings }: { settings: ProjectSettings }) {
   const downloadable = (g: GraphName) => results[g].valid && results[g].storeTripleCount > 0;
   const downloadGraph = (g: GraphName) => download(withTtl(names[g], g, settings.name), results[g].turtle);
   const graphs = (['data', 'ontology'] as const).filter(downloadable);
+  const downloadProject = () => {
+    const s = useApp.getState();
+    const file = writeProjectFile(
+      {
+        settings,
+        mode: s.mode,
+        triples: s.triples,
+        distinctPairs: s.distinctPairs,
+        exceptions: s.exceptions,
+        nodePositions: s.nodePositions,
+        valuesMode: s.valuesMode,
+      },
+      new Date(),
+      { data: results.data.turtle, ontology: results.ontology.turtle },
+    );
+    download(projectFileName(settings.name), file, 'application/json;charset=utf-8');
+  };
 
   return (
     <div className="app">
@@ -61,17 +79,28 @@ export function ExportScreen({ settings }: { settings: ProjectSettings }) {
           <div className="stack-8" style={{ gap: 6 }}>
             <h1>Export</h1>
             <p>Each graph downloads as its own Turtle file, ready to upload to your graph database.</p>
+            <p>
+              The project file keeps everything (both graphs, settings and your decisions) so you can open it again
+              later from the setup screen.
+            </p>
           </div>
-          <button
-            type="button"
-            className="btn primary lg"
-            disabled={graphs.length === 0}
-            // Space the downloads out: browsers may drop a second one started in the same moment.
-            onClick={() => graphs.forEach((g, i) => setTimeout(() => downloadGraph(g), i * 400))}
-          >
-            {graphs.length > 0 && <DownloadIcon />}
-            {graphs.length === 1 ? `Download ${TITLES[graphs[0]]}` : 'Download both'}
-          </button>
+          <div className="export-actions">
+            {/* PRJ-01: the whole project in one file, to open again later (PRJ-03). */}
+            <button type="button" className="btn lg" onClick={downloadProject}>
+              <DownloadIcon />
+              Download project file
+            </button>
+            <button
+              type="button"
+              className="btn primary lg"
+              disabled={graphs.length === 0}
+              // Space the downloads out: browsers may drop a second one started in the same moment.
+              onClick={() => graphs.forEach((g, i) => setTimeout(() => downloadGraph(g), i * 400))}
+            >
+              {graphs.length > 0 && <DownloadIcon />}
+              {graphs.length === 1 ? `Download ${TITLES[graphs[0]]}` : 'Download both'}
+            </button>
+          </div>
         </div>
 
         <div className="export-grid">

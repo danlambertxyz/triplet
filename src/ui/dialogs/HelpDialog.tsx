@@ -317,6 +317,30 @@ export function HelpDialog({ onClose }: { onClose: () => void }) {
             <li>Starting a new project (from the project name) clears this one; it can't be undone.</li>
           </ul>
         </details>
+
+        <details>
+          <summary>Saving and opening a project file</summary>
+          <ul>
+            <li>
+              Your project lives only in this browser. Clearing the browser's site data deletes it, and it doesn't move
+              to another browser or computer.
+            </li>
+            <li>
+              To keep a copy, click <b>Export .ttl</b>, then <b>Download project file</b>. It saves one .triplet.json
+              file with both graphs, your settings, the mode, the pairs you kept as different things, the exceptions
+              you accepted and where you dragged the cards. It also holds both graphs' Turtle, for reading.
+            </li>
+            <li>
+              To carry on, start a new project and choose <b>Open a project file</b> on the setup screen. Triplet shows
+              what the file holds before it opens anything, and the project comes back exactly as saved. Undo history
+              isn't saved, so Undo starts fresh.
+            </li>
+            <li>
+              Only Triplet's own project files open. Triplet is for designing from scratch or carrying on with your
+              own projects; it doesn't open Turtle files written elsewhere.
+            </li>
+          </ul>
+        </details>
       </div>
       <div className="dialog-foot end">
         <div className="dialog-btns">

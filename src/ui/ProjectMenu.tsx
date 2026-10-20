@@ -131,6 +131,7 @@ function NewProjectDialog({ name, onClose }: { name: string; onClose: () => void
         <h2 id="np-title">Start a new project?</h2>
         <p id="np-desc">
           {what} “{name}” and its settings are cleared too, and you go back to the setup screen. You can't undo this.
+          {triples.length > 0 && ' To keep it, export first and download the project file; you can open it again later.'}
         </p>
       </div>
       <div className="dialog-foot">

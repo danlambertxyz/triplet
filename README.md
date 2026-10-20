@@ -20,6 +20,7 @@ You see them as a list and as a graph, edit them, and export each one as a Turtl
 - **Editing with Undo.** Rename, merge, set a class, or delete with a warning that lists every triple affected.
 - **Duplicate spotting.** “Date of Birth” and “date of birth” are flagged so you can merge them, keep one, link them, or keep them apart.
 - **Sketch and Validate modes.** Sketch lets you type anything. Validate checks your Data graph against your own Ontology graph (wrong class, wrong value type, a single-value relationship with two values …) and flags problems without blocking you.
+- **Project files.** Save the whole project to one file and open it again later to pick up where you left off.
 - **Clean Turtle export.** Written and re-checked with [N3.js](https://github.com/rdfjs/N3.js); only the prefixes you use are declared.
 
 A built-in guide (the **?** button) explains everything in plain language.
@@ -30,7 +31,7 @@ Triplet has no server, no account and no tracking. Your project is saved **only 
 
 - Clearing your browser's site data deletes your project.
 - It doesn't move between browsers or computers.
-- **Export your `.ttl` files to keep a copy.** (Opening `.ttl` files back into Triplet is planned but not built yet.)
+- **Download a project file to keep a copy.** On the Export screen, **Download project file** saves one `.triplet.json` file with both graphs, your settings and your decisions (plus both graphs' Turtle). To carry on, in this or another browser, choose **Open a project file** on the setup screen. Undo history isn't saved.
 
 ## Three ways to use it
 
@@ -72,7 +73,7 @@ The core RDF logic lives in `src/core/` as plain TypeScript with no UI code, and
 
 ## Status
 
-Triplet is a working first version (MVP). Planned next: opening `.ttl` files to carry on where you left off, drafting an ontology from a data file, and loading a published ontology to check against.
+Triplet is a working first version (MVP). Planned next: drafting an ontology from a data file, and loading a published ontology to check against.
 
 Desktop and laptop browsers only.
 

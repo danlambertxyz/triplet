@@ -7,6 +7,7 @@ import { exceptionKey, pruneExceptions, repointExceptions, type AcceptedExceptio
 import { repointPairs, type DistinctPair } from '../core/duplicates';
 import type { Point } from '../core/graphLayout';
 import type { ValuesMode } from '../core/graphModel';
+import type { ProjectContent } from '../core/projectFile';
 import { emptyHistory, record, redo, undo, type History } from '../core/history';
 import { setupFromSettings, type SetupDraft } from '../core/settings';
 import type { GraphName, IriTerm, ProjectSettings, Triple } from '../core/types';
@@ -85,6 +86,8 @@ interface AppState {
   /** Which sections of the triple list are folded away. */
   listCollapsed: Record<GraphName, boolean>;
 
+  /** PRJ-03: opens a saved project file as the project; Undo starts empty. */
+  openProject: (project: ProjectContent) => void;
   /** Starts a project; `triples` are the classes named on the setup screen (SCR-01). */
   createProject: (settings: ProjectSettings, triples?: Omit<Triple, 'id'>[]) => void;
   /**
@@ -281,6 +284,25 @@ export const useApp = create<AppState>()(
           distinctPairs: [],
           exceptions: [],
           mode: 'sketch',
+          flaggedOnly: false,
+          history: emptyHistory(),
+          dialog: null,
+        }),
+
+      openProject: (p) =>
+        set({
+          settings: p.settings,
+          triples: p.triples,
+          distinctPairs: p.distinctPairs,
+          exceptions: p.exceptions,
+          mode: p.mode,
+          nodePositions: p.nodePositions,
+          valuesMode: p.valuesMode,
+          lastAdded: [],
+          view: 'data',
+          target: 'data',
+          screen: 'main',
+          setupDraft: null,
           flaggedOnly: false,
           history: emptyHistory(),
           dialog: null,

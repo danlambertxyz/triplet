@@ -156,7 +156,8 @@ select.input:disabled { border-color: #e0e0e0; color: var(--faint); background: 
 
 /* Setup */
 .setup { flex: 1 1 auto; display: flex; justify-content: center; padding: 56px 16px 64px; }
-.setup form { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 28px; }
+.setup-col { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 28px; }
+.stack-28 { display: flex; flex-direction: column; gap: 28px; }
 .setup h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.015em; }
 .setup .lead { margin: 0; color: var(--muted); line-height: 1.5; }
 .stack-8 { display: flex; flex-direction: column; gap: 8px; }
@@ -547,3 +548,13 @@ h3.band { margin: 0; font-weight: 400; padding: 0; }
 .trow .flags .flag-acts .link-btn { font-size: 11.5px; }
 .dialog-flags { max-height: none; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 6px; }
 .exc-reason { display: block; margin-top: 2px; font-size: 11.5px; color: var(--muted-2); }
+
+/* Project file (Milestone 8); no design, so it follows the setup and export screens. */
+.start-choice { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.start-note { font-size: 13px; color: var(--muted); }
+.file-input { font-size: 13px; }
+.file-input::file-selector-button { height: 32px; margin-right: 10px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: #ffffff; font: inherit; font-weight: 500; cursor: pointer; }
+.project-facts th { width: 140px; font-weight: 500; color: var(--muted); }
+.project-facts td { overflow-wrap: anywhere; }
+.card .project-note { font-size: 12px; }
+.export-actions { display: flex; flex-wrap: wrap; gap: 10px; }

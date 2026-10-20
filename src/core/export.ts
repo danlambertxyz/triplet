@@ -254,11 +254,16 @@ export function validateTurtle(turtle: string): { valid: boolean; count: number;
 
 /** File name suggestion from the project name, e.g. "individual-client-data.ttl". */
 export function defaultFileName(projectName: string, graph: GraphName): string {
+  return `${fileSlug(projectName)}-${graph}.ttl`;
+}
+
+/** The project name as a file name, e.g. "individual-client"; "triplet" when it has no letters or digits. */
+export function fileSlug(projectName: string): string {
   const slug = projectName
     .toLowerCase()
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-  return `${slug || 'triplet'}-${graph}.ttl`;
+  return slug || 'triplet';
 }
